@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ── ADMIN-SPECIFIC STYLES ── */
+    :root {
+      --admin-accent: #A4E61D;
+      --admin-danger: #ef4444;
+      --admin-warn:   #f59e0b;
+      --admin-ok:     #22c55e;
+    }
+
+    body { background: var(--forest-deep); }
+
+    /* ── LOGIN SCREEN ── */
+    #admin-login-screen {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 40% 40%, rgba(164,230,29,0.06) 0%, transparent 65%),
+                  var(--forest-deep);
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.15);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      width: 100%; max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .login-icon {
+      width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      background: var(--lime-bg); border: 1px solid rgba(164,230,29,0.25);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--lime);
+      margin-bottom: 1.25rem;
+    }
+    .login-title {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+      color: var(--off-white); letter-spacing: -0.02em; margin-bottom: 0.3rem;
+    }
+    .login-sub { font-size: 0.8rem; color: var(--slate-500); margin-bottom: 1.75rem; }
+
+    .pin-wrap { position: relative; }
+    .pin-wrap .form-input { padding-left: 2.6rem; letter-spacing: 0.15em; font-size: 1rem; }
+    .pin-icon { position:absolute;left:0.88rem;top:50%;transform:translateY(-50%);color:var(--slate-500);font-size:0.82rem;pointer-events:none; }
+    .pin-toggle { position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--slate-700);font-size:0.82rem;transition:color var(--transition); }
+    .pin-toggle:hover { color:var(--lime); }
+
+    /* ── MAIN ADMIN UI (hidden until logged in) ── */
+    #admin-ui { display: none; }
+    #admin-ui.visible { display: block; }
+
+    /* ── ADMIN NAVBAR ── */
+    #admin-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px;
+      background: var(--forest);
+      border-bottom: 1px solid rgba(164,230,29,0.12);
+      display: flex; align-items: center;
+      padding: 0 1.5rem; z-index: 800;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .admin-nav-brand {
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
+      color: var(--lime); letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .admin-badge {
+      background: rgba(164,230,29,0.15); color: var(--lime);
+      font-family: var(--font-body); font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.18rem 0.55rem; border-radius: 99rem;
+      border: 1px solid rgba(164,230,29,0.25);
+    }
+    .admin-nav-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+    .admin-date { font-size: 0.7rem; color: var(--slate-500); }
+    .admin-logout {
+      background: none; border: 1px solid rgba(164,230,29,0.2);
+      color: var(--slate-300); font-family: var(--font-body);
+      font-size: 0.75rem; font-weight: 600; padding: 0.4rem 0.9rem;
+      border-radius: 99rem; cursor: pointer;
+      transition: all var(--transition); display: flex; align-items: center; gap: 0.4rem;
+    }
+    .admin-logout:hover { color: var(--admin-danger); border-color: var(--admin-danger); background: rgba(239,68,68,0.08); }
+
+    /* ── MAIN CONTENT ── */
+    .admin-main {
+      padding-top: 60px; min-height: 100vh;
+      background: var(--forest-deep);
+    }
+
+    /* ── PAGE HEADER ── */
+    .admin-header {
+      background: var(--forest);
+      border-bottom: 1px solid rgba(164,230,29,0.1);
+      padding: 1.5rem;
+    }
+    .admin-header-inner {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .admin-header-title {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+      color: var(--off-white); letter-spacing: -0.02em;
+    }
+    .admin-header-title span { color: var(--lime); }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      max-width: 1300px; margin: 1.5rem auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 1rem; padding: 0 1.5rem;
+    }
+    .stat-card {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.1);
+      border-radius: 1rem; padding: 1.1rem 1.2rem;
+      transition: border-color var(--transition), transform var(--transition);
+      cursor: default;
+    }
+    .stat-card:hover { border-color: rgba(164,230,29,0.25); transform: translateY(-2px); }
+    .stat-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+    .stat-icon {
+      width: 2rem; height: 2rem; border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+    }
+    .stat-val { font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; color: var(--off-white); line-height: 1; }
+    .stat-label { font-size: 0.7rem; color: var(--slate-500); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      max-width: 1300px; margin: 0 auto 1rem;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.15);
+      border-radius: 99rem; padding: 0.55rem 1rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-box:focus-within {
+      border-color: var(--lime);
+      box-shadow: 0 0 0 3px rgba(164,230,29,0.1);
+    }
+    .search-box i { color: var(--slate-500); font-size: 0.82rem; }
+    .search-box input {
+      border: none; background: transparent;
+      font-family: var(--font-body); font-size: 0.85rem;
+      color: var(--off-white); outline: none; flex: 1;
+    }
+    .search-box input::placeholder { color: var(--slate-700); }
+
+    .filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.1);
+      color: var(--slate-500);
+      font-family: var(--font-body); font-size: 0.75rem; font-weight: 600;
+      padding: 0.45rem 1rem; border-radius: 99rem; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .tab-btn:hover { color: var(--lime); border-color: rgba(164,230,29,0.3); }
+    .tab-btn.active { background: var(--lime); color: var(--forest-deep); border-color: var(--lime); }
+
+    .refresh-btn {
+      background: var(--lime-bg); border: 1px solid rgba(164,230,29,0.2);
+      color: var(--lime); font-size: 0.8rem; padding: 0.5rem 0.85rem;
+      border-radius: 99rem; cursor: pointer;
+      transition: all var(--transition); display: flex; align-items: center; gap: 0.4rem;
+      font-family: var(--font-body); font-weight: 600;
+    }
+    .refresh-btn:hover { background: rgba(164,230,29,0.16); }
+    .refresh-btn.spinning i { animation: spin 0.7s linear infinite; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      max-width: 1300px; margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+    }
+    .table-card {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.1);
+      border-radius: 1rem; overflow: hidden;
+    }
+    .table-responsive { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    thead th {
+      text-align: left; padding: 0.75rem 1rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--slate-500);
+      background: rgba(164,230,29,0.03);
+      border-bottom: 1px solid rgba(164,230,29,0.08);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 0.9rem 1rem;
+      font-size: 0.82rem; color: var(--slate-300);
+      border-bottom: 1px solid rgba(164,230,29,0.05);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(164,230,29,0.03); }
+
+    .td-seller { display: flex; align-items: center; gap: 0.65rem; }
+    .td-avatar {
+      width: 2rem; height: 2rem; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--forest-light), var(--lime-muted));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 0.75rem; font-weight: 800;
+      color: var(--forest-deep);
+    }
+    .td-name { font-weight: 600; color: var(--off-white); font-size: 0.85rem; }
+    .td-mobile { font-size: 0.72rem; color: var(--slate-500); }
+
+    .td-price { font-weight: 700; color: var(--lime); }
+    .td-time  { font-size: 0.72rem; color: var(--slate-700); white-space: nowrap; }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 0.22rem 0.65rem; border-radius: 99rem;
+      white-space: nowrap;
+    }
+    .status-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+    .pill-Pending   { background: rgba(245,158,11,0.12); color: #fbbf24; }
+    .pill-Pending::before   { background: #fbbf24; }
+    .pill-Verified  { background: rgba(34,197,94,0.12);  color: #4ade80; }
+    .pill-Verified::before  { background: #4ade80; }
+    .pill-Rejected  { background: rgba(239,68,68,0.12);  color: #f87171; }
+    .pill-Rejected::before  { background: #f87171; }
+    .pill-Suspended { background: rgba(148,163,184,0.12); color: #94a3b8; }
+    .pill-Suspended::before { background: #94a3b8; }
+
+    /* Action buttons */
+    .action-group { display: flex; gap: 0.35rem; align-items: center; }
+    .act-btn {
+      width: 1.9rem; height: 1.9rem; border-radius: 0.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; cursor: pointer; border: none;
+      transition: all var(--transition);
+    }
+    .act-btn:hover { transform: translateY(-1px); }
+    .act-verify  { background: rgba(34,197,94,0.1);   color: #4ade80; }
+    .act-verify:hover  { background: #22c55e; color: #fff; }
+    .act-reject  { background: rgba(245,158,11,0.1);  color: #fbbf24; }
+    .act-reject:hover  { background: #f59e0b; color: #fff; }
+    .act-suspend { background: rgba(148,163,184,0.1); color: #94a3b8; }
+    .act-suspend:hover { background: #64748b; color: #fff; }
+    .act-delete  { background: rgba(239,68,68,0.1);   color: #f87171; }
+    .act-delete:hover  { background: #ef4444; color: #fff; }
+
+    /* ── EMPTY / LOADING STATE ── */
+    .table-state {
+      padding: 3.5rem 1.5rem; text-align: center;
+    }
+    .table-state-icon { font-size: 2.2rem; color: var(--slate-700); margin-bottom: 0.75rem; }
+    .table-state-title { font-size: 0.95rem; font-weight: 600; color: var(--slate-500); }
+    .table-state-sub   { font-size: 0.78rem; color: var(--slate-700); margin-top: 0.25rem; }
+
+    .spinner {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      border: 2.5px solid rgba(164,230,29,0.15);
+      border-top-color: var(--lime);
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 0.75rem;
+    }
+
+    /* ── CONFIRM MODAL ── */
+    #confirm-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); z-index: 1000;
+      align-items: center; justify-content: center;
+      padding: 1.5rem; backdrop-filter: blur(4px);
+    }
+    #confirm-modal.open { display: flex; }
+    .modal-card {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.15);
+      border-radius: 1.25rem; padding: 2rem;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .modal-icon {
+      width: 3rem; height: 3rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; margin-bottom: 1rem;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--off-white); margin-bottom: 0.4rem; }
+    .modal-sub   { font-size: 0.82rem; color: var(--slate-500); line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal-actions { display: flex; gap: 0.65rem; }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      z-index: 2000; display: flex; flex-direction: column; gap: 0.65rem;
+    }
+    .toast {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.15);
+      border-radius: 0.75rem; padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 0.65rem;
+      font-size: 0.82rem; color: var(--off-white);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      min-width: 250px; max-width: 340px;
+      animation: slideUp 0.3s ease;
+    }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error   { border-color: rgba(239,68,68,0.3); }
+    .toast i { font-size: 1rem; flex-shrink: 0; }
+    .toast.success i { color: #4ade80; }
+    .toast.error   i { color: #f87171; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .admin-header-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     ADMIN LOGIN SCREEN
+════════════════════════════════════════ -->
+<div id="admin-login-screen">
+  <div class="login-card">
+
+    <div class="login-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <div class="login-title">Admin Panel</div>
+    <p class="login-sub">ZiphillMart · Restricted Access</p>
+
+    <div id="login-alert" class="alert" style="margin-bottom:1rem;text-align:left"></div>
+
+    <form id="admin-login-form" novalidate>
+      <div class="form-group" style="margin-bottom:1rem">
+        <div class="pin-wrap">
+          <i class="pin-icon fa-solid fa-key"></i>
+          <input type="password" id="admin-pin" class="form-input"
+            placeholder="Enter Admin PIN" autocomplete="off"
+            style="padding-left:2.6rem;padding-right:2.5rem;letter-spacing:0.1em" required />
+          <button type="button" class="pin-toggle" id="pin-toggle">
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-lime btn-full" style="padding:0.82rem">
+        <div class="btn-spinner"></div>
+        <span class="btn-text"><i class="fa-solid fa-right-to-bracket"></i> Enter Admin Panel</span>
+      </button>
+    </form>
+
+    <p style="margin-top:1.25rem;font-size:0.7rem;color:var(--slate-700)">
+      <i class="fa-solid fa-lock" style="color:var(--lime);margin-right:0.3rem"></i>
+      Admin PIN is set in your Google Apps Script (code.gs).
+    </p>
+    <a href="index.html" style="display:block;margin-top:0.75rem;font-size:0.72rem;color:var(--slate-500);transition:color var(--transition)"
+       onmouseover="this.style.color='var(--lime)'" onmouseout="this.style.color='var(--slate-500)'">
+      ← Back to ZiphillMart
+    </a>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     MAIN ADMIN UI (shown after login)
+════════════════════════════════════════ -->
+<div id="admin-ui">
+
+  <!-- ADMIN NAVBAR -->
+  <nav id="admin-nav">
+    <div class="admin-nav-brand">
+      <i class="fa-solid fa-seedling" style="font-size:0.9rem;opacity:0.85"></i>
+      ZiphillMart
+      <span class="admin-badge">Admin</span>
+    </div>
+    <div class="admin-nav-right">
+      <span class="admin-date" id="admin-nav-date"></span>
+      <button class="admin-logout" id="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>Sign Out
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+
+    <!-- PAGE HEADER -->
+    <div class="admin-header">
+      <div class="admin-header-inner">
+        <div>
+          <div class="admin-header-title">Seller <span>Management</span></div>
+          <p style="font-size:0.78rem;color:var(--slate-500);margin-top:0.2rem">
+            Verify, reject, or remove seller accounts and their product listings.
+          </p>
+        </div>
+        <a href="index.html" class="btn btn-ghost btn-sm">
+          <i class="fa-solid fa-store"></i>View Site
+        </a>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon" style="background:rgba(164,230,29,0.1);color:var(--lime)"><i class="fa-solid fa-users"></i></div>
+        </div>
+        <div class="stat-val" id="stat-total">—</div>
+        <div class="stat-label">Total Sellers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#fbbf24"><i class="fa-solid fa-clock"></i></div>
+        </div>
+        <div class="stat-val" id="stat-pending" style="color:#fbbf24">—</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.1);color:#4ade80"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+        <div class="stat-val" id="stat-verified" style="color:#4ade80">—</div>
+        <div class="stat-label">Verified</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon" style="background:rgba(239,68,68,0.1);color:#f87171"><i class="fa-solid fa-ban"></i></div>
+        </div>
+        <div class="stat-val" id="stat-rejected" style="color:#f87171">—</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="admin-search" placeholder="Search by name, mobile, or product…" />
+      </div>
+      <div class="filter-tabs">
+        <button class="tab-btn active" data-filter="all">All</button>
+        <button class="tab-btn" data-filter="Pending">Pending</button>
+        <button class="tab-btn" data-filter="Verified">Verified</button>
+        <button class="tab-btn" data-filter="Rejected">Rejected</button>
+      </div>
+      <button class="refresh-btn" id="refresh-btn">
+        <i class="fa-solid fa-rotate-right"></i>Refresh
+      </button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-card">
+        <div class="table-responsive">
+          <table id="sellers-table">
+            <thead>
+              <tr>
+                <th>Seller</th>
+                <th>Category</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Registered</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sellers-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="table-state" class="table-state">
+          <div class="spinner"></div>
+          <div class="table-state-title">Loading sellers…</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-main -->
+</div><!-- /admin-ui -->
+
+
+<!-- CONFIRM MODAL -->
+<div id="confirm-modal">
+  <div class="modal-card">
+    <div class="modal-icon" id="modal-icon"></div>
+    <div class="modal-title" id="modal-title">Confirm Action</div>
+    <div class="modal-sub"  id="modal-sub">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modal-cancel" style="flex:1;justify-content:center">Cancel</button>
+      <button class="btn" id="modal-confirm" style="flex:1;justify-content:center">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ADMIN PANEL — JavaScript
+   All API calls go to GAS_URL (same as script.js)
+═══════════════════════════════════════════════════════ */
+
+// ── Must match the GAS_URL in script.js ──
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxMKcqxhKK7vFGlTpr7Tb7vH8F15PVbkCzqtiV2Zl_eUMIV32_iBn5vJR6fFO0xqEw/exec';
+
+/* ── STATE ── */
+let adminToken   = '';
+let allSellers   = [];
+let activeFilter = 'all';
+let pendingAction = null; // { type, mobile, sellerName }
+
+/* ── DATE ── */
+const dateStr = new Date().toLocaleDateString('en-IN', {
+  weekday:'short', year:'numeric', month:'short', day:'numeric'
+});
+document.getElementById('admin-nav-date').textContent = `Today: ${dateStr}`;
+
+
+/* ════════════════════════════════════════════
+   SHA-256 (same as script.js)
+════════════════════════════════════════════ */
+async function sha256(msg) {
+  const buf  = new TextEncoder().encode(msg);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+
+/* ════════════════════════════════════════════
+   ADMIN LOGIN
+════════════════════════════════════════════ */
+document.getElementById('admin-login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pin = document.getElementById('admin-pin').value.trim();
+  const btn = e.target.querySelector('button[type="submit"]');
+
+  if (!pin) { showLoginAlert('error', 'Please enter your Admin PIN.'); return; }
+
+  setBtnLoading(btn, true);
+  hideLoginAlert();
+
+  // Demo mode
+  if (GAS_URL.includes('YOUR_GOOGLE')) {
+    adminToken = 'demo_admin_' + Date.now();
+    sessionStorage.setItem('zm_admin_token', adminToken);
+    setBtnLoading(btn, false);
+    enterAdminUI();
+    loadSellers();
+    return;
+  }
+
+  try {
+    const url = `${GAS_URL}?action=adminLogin&pin=${encodeURIComponent(pin)}`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.success) {
+      adminToken = data.adminToken;
+      sessionStorage.setItem('zm_admin_token', adminToken);
+      setBtnLoading(btn, false);
+      enterAdminUI();
+      loadSellers();
+    } else {
+      setBtnLoading(btn, false);
+      showLoginAlert('error', data.message || 'Incorrect PIN.');
+    }
+  } catch (err) {
+    setBtnLoading(btn, false);
+    showLoginAlert('error', 'Could not reach server. Check your connection.');
+  }
+});
+
+/* PIN visibility toggle */
+document.getElementById('pin-toggle').addEventListener('click', function() {
+  const input = document.getElementById('admin-pin');
+  input.type  = input.type === 'password' ? 'text' : 'password';
+  this.querySelector('i').className =
+    input.type === 'password' ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+});
+
+/* Restore session if already logged in this tab */
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('zm_admin_token');
+  if (saved) {
+    adminToken = saved;
+    enterAdminUI();
+    loadSellers();
+  }
+});
+
+function enterAdminUI() {
+  document.getElementById('admin-login-screen').style.display = 'none';
+  document.getElementById('admin-ui').classList.add('visible');
+}
+
+/* Logout */
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('zm_admin_token');
+  adminToken = '';
+  allSellers = [];
+  document.getElementById('admin-login-screen').style.display = 'flex';
+  document.getElementById('admin-ui').classList.remove('visible');
+  document.getElementById('admin-pin').value = '';
+});
+
+
+/* ════════════════════════════════════════════
+   LOAD SELLERS FROM GAS
+════════════════════════════════════════════ */
+async function loadSellers() {
+  showTableState('loading');
+
+  // Demo mode — show empty state
+  if (GAS_URL.includes('YOUR_GOOGLE')) {
+    allSellers = getDemoSellers();
+    updateStats({ total:3, pending:2, verified:1, rejected:0 });
+    renderTable();
+    return;
+  }
+
+  try {
+    const url  = `${GAS_URL}?action=getSellers&filter=all&adminToken=${encodeURIComponent(adminToken)}`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.success) {
+      allSellers = data.sellers || [];
+      updateStats(data.stats || {});
+      renderTable();
+    } else {
+      showTableState('error', 'Failed to load sellers: ' + (data.message || 'Unknown error'));
+    }
+  } catch (err) {
+    showTableState('error', 'Network error. Could not reach server.');
+  }
+}
+
+/* Refresh button */
+document.getElementById('refresh-btn').addEventListener('click', () => {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  loadSellers().finally(() => btn.classList.remove('spinning'));
+});
+
+
+/* ════════════════════════════════════════════
+   RENDER TABLE
+════════════════════════════════════════════ */
+function renderTable() {
+  const q      = document.getElementById('admin-search').value.trim().toLowerCase();
+  const tbody  = document.getElementById('sellers-tbody');
+
+  let filtered = activeFilter === 'all'
+    ? allSellers
+    : allSellers.filter(s => String(s.status).toLowerCase() === activeFilter.toLowerCase());
+
+  if (q) {
+    filtered = filtered.filter(s =>
+      String(s.sellerName).toLowerCase().includes(q)  ||
+      String(s.mobile).includes(q)                     ||
+      String(s.productName).toLowerCase().includes(q)
+    );
+  }
+
+  document.getElementById('sellers-table').style.display = filtered.length ? 'table' : 'none';
+
+  if (!filtered.length) {
+    showTableState('empty',
+      q ? 'No sellers match your search.' : `No ${activeFilter === 'all' ? '' : activeFilter + ' '}sellers yet.`);
+    return;
+  }
+
+  hideTableState();
+  tbody.innerHTML = filtered.map(s => buildRow(s)).join('');
+
+  // Attach action listeners
+  tbody.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { action, mobile, name } = btn.dataset;
+      triggerAction(action, mobile, name);
+    });
+  });
+}
+
+function buildRow(s) {
+  const initial  = (s.sellerName || '?').charAt(0).toUpperCase();
+  const status   = s.status || 'Pending';
+  const dateDisp = s.timestamp
+    ? new Date(s.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' })
+    : '—';
+  const price    = s.price ? `₹${s.price}` : '—';
+  const notes    = s.notes ? `<span title="${s.notes}" style="cursor:help;text-decoration:underline dotted;color:var(--slate-500)">${s.notes.substring(0,20)}${s.notes.length>20?'…':''}</span>` : '<span style="color:var(--slate-700)">—</span>';
+
+  const notVerified  = status !== 'Verified';
+  const notRejected  = status !== 'Rejected';
+  const notSuspended = status !== 'Suspended';
+
+  return `
+    <tr>
+      <td>
+        <div class="td-seller">
+          <div class="td-avatar">${initial}</div>
+          <div>
+            <div class="td-name">${escHtml(s.sellerName)}</div>
+            <div class="td-mobile">${escHtml(s.mobile)}</div>
+          </div>
+        </div>
+      </td>
+      <td>${escHtml(s.category) || '—'}</td>
+      <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(s.productName)}">
+        ${escHtml(s.productName) || '—'}
+      </td>
+      <td class="td-price">${price}</td>
+      <td class="td-time">${dateDisp}</td>
+      <td><span class="status-pill pill-${status}">${status}</span></td>
+      <td>${notes}</td>
+      <td>
+        <div class="action-group">
+          ${notVerified  ? `<button class="act-btn act-verify"  title="Verify"   data-action="verify"  data-mobile="${s.mobile}" data-name="${escHtml(s.sellerName)}"><i class="fa-solid fa-check"></i></button>` : ''}
+          ${notRejected  ? `<button class="act-btn act-reject"  title="Reject"   data-action="reject"  data-mobile="${s.mobile}" data-name="${escHtml(s.sellerName)}"><i class="fa-solid fa-xmark"></i></button>` : ''}
+          ${notSuspended ? `<button class="act-btn act-suspend" title="Suspend"  data-action="suspend" data-mobile="${s.mobile}" data-name="${escHtml(s.sellerName)}"><i class="fa-solid fa-pause"></i></button>` : ''}
+          <button class="act-btn act-delete" title="Delete Account" data-action="delete" data-mobile="${s.mobile}" data-name="${escHtml(s.sellerName)}">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+}
+
+
+/* ════════════════════════════════════════════
+   ACTION FLOW — confirm modal → API call
+════════════════════════════════════════════ */
+const modalCfg = {
+  verify:  { title: 'Verify Seller',   color:'#22c55e', icon:'fa-circle-check', btnClass:'btn-lime',    btnText:'Yes, Verify' },
+  reject:  { title: 'Reject Seller',   color:'#f59e0b', icon:'fa-xmark-circle', btnClass:'btn-danger',  btnText:'Yes, Reject' },
+  suspend: { title: 'Suspend Seller',  color:'#64748b', icon:'fa-pause-circle', btnClass:'btn-danger',  btnText:'Yes, Suspend' },
+  delete:  { title: 'Delete Account',  color:'#ef4444', icon:'fa-trash-can',    btnClass:'btn-danger',  btnText:'Yes, Delete' }
+};
+
+function triggerAction(action, mobile, sellerName) {
+  pendingAction = { action, mobile, sellerName };
+  const cfg = modalCfg[action];
+
+  document.getElementById('modal-icon').innerHTML =
+    `<i class="fa-solid ${cfg.icon}" style="font-size:1.3rem;color:${cfg.color}"></i>`;
+  document.getElementById('modal-icon').style.background = `${cfg.color}20`;
+  document.getElementById('modal-title').textContent = cfg.title;
+  document.getElementById('modal-sub').innerHTML =
+    `This action will affect <strong style="color:var(--off-white)">${escHtml(sellerName)}</strong> (${mobile}).<br/>
+    ${action === 'delete' ? '<span style="color:#f87171">This <strong>cannot be undone</strong>.</span>' : 'You can change this later.'}`;
+
+  const confirmBtn = document.getElementById('modal-confirm');
+  confirmBtn.className = `btn ${cfg.btnClass}`;
+  confirmBtn.style.flex = '1';
+  confirmBtn.style.justifyContent = 'center';
+  confirmBtn.textContent = cfg.btnText;
+
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('confirm-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirm-modal')) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+document.getElementById('modal-confirm').addEventListener('click', async () => {
+  if (!pendingAction) return;
+  closeModal();
+  await executeAction(pendingAction);
+  pendingAction = null;
+});
+
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+}
+
+async function executeAction({ action, mobile, sellerName }) {
+  const statusMap  = { verify: 'Verified', reject: 'Rejected', suspend: 'Suspended' };
+  const notesMap   = { verify: '', reject: 'Rejected by admin', suspend: 'Suspended by admin' };
+
+  // Demo mode — update locally without server
+  if (GAS_URL.includes('YOUR_GOOGLE')) {
+    if (action === 'delete') {
+      allSellers = allSellers.filter(s => String(s.mobile) !== String(mobile));
+      showToast('success', `Deleted ${sellerName}.`);
+    } else {
+      const seller = allSellers.find(s => String(s.mobile) === String(mobile));
+      if (seller) seller.status = statusMap[action];
+      showToast('success', `${sellerName} marked as ${statusMap[action]}.`);
+    }
+    updateStatsFromLocal();
+    renderTable();
+    return;
+  }
+
+  // ── Real GAS: use GET to avoid CORS preflight issues with POST ──
+  try {
+    let url;
+
+    if (action === 'delete') {
+      url = `${GAS_URL}?action=deleteSeller`
+          + `&mobile=${encodeURIComponent(mobile)}`
+          + `&adminToken=${encodeURIComponent(adminToken)}`;
+    } else {
+      url = `${GAS_URL}?action=updateStatus`
+          + `&mobile=${encodeURIComponent(mobile)}`
+          + `&status=${encodeURIComponent(statusMap[action])}`
+          + `&notes=${encodeURIComponent(notesMap[action] || '')}`
+          + `&adminToken=${encodeURIComponent(adminToken)}`;
+    }
+
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.success) {
+      showToast('success', data.message || 'Done.');
+      await loadSellers(); // refresh from server
+    } else {
+      showToast('error', data.message || 'Action failed.');
+    }
+
+  } catch (err) {
+    console.error('executeAction error:', err);
+    showToast('error', 'Network error. Please try again.');
+  }
+}
+
+
+/* ════════════════════════════════════════════
+   FILTERS + SEARCH
+════════════════════════════════════════════ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderTable();
+  });
+});
+
+document.getElementById('admin-search').addEventListener('input', () => renderTable());
+
+
+/* ════════════════════════════════════════════
+   STATS
+════════════════════════════════════════════ */
+function updateStats(stats) {
+  document.getElementById('stat-total').textContent    = stats.total    ?? 0;
+  document.getElementById('stat-pending').textContent  = stats.pending  ?? 0;
+  document.getElementById('stat-verified').textContent = stats.verified ?? 0;
+  document.getElementById('stat-rejected').textContent = stats.rejected ?? 0;
+}
+
+function updateStatsFromLocal() {
+  updateStats({
+    total:    allSellers.length,
+    pending:  allSellers.filter(s => s.status === 'Pending').length,
+    verified: allSellers.filter(s => s.status === 'Verified').length,
+    rejected: allSellers.filter(s => s.status === 'Rejected').length
+  });
+}
+
+
+/* ════════════════════════════════════════════
+   TABLE STATE
+════════════════════════════════════════════ */
+function showTableState(type, msg) {
+  const st = document.getElementById('table-state');
+  document.getElementById('sellers-table').style.display = 'none';
+
+  if (type === 'loading') {
+    st.innerHTML = `<div class="spinner"></div><div class="table-state-title">Loading sellers…</div>`;
+  } else if (type === 'empty') {
+    st.innerHTML = `<div class="table-state-icon"><i class="fa-solid fa-box-open"></i></div>
+                    <div class="table-state-title">No sellers found</div>
+                    <div class="table-state-sub">${msg || ''}</div>`;
+  } else if (type === 'error') {
+    st.innerHTML = `<div class="table-state-icon" style="color:#f87171"><i class="fa-solid fa-circle-xmark"></i></div>
+                    <div class="table-state-title" style="color:#f87171">Error</div>
+                    <div class="table-state-sub">${msg || 'Something went wrong.'}</div>
+                    <button onclick="loadSellers()" class="btn btn-ghost btn-sm" style="margin-top:1rem">
+                      <i class="fa-solid fa-rotate-right"></i>Retry
+                    </button>`;
+  }
+  st.style.display = 'block';
+}
+
+function hideTableState() {
+  document.getElementById('table-state').style.display = 'none';
+  document.getElementById('sellers-table').style.display = 'table';
+}
+
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+function showToast(type, message) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+    <span>${escHtml(message)}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(8px)'; toast.style.transition = '0.3s'; setTimeout(() => toast.remove(), 320); }, 3000);
+}
+
+
+/* ════════════════════════════════════════════
+   DEMO DATA (when GAS not configured)
+════════════════════════════════════════════ */
+function getDemoSellers() {
+  return [
+    { rowIndex:2, timestamp:'2024-03-15T10:22:00Z', sellerName:'Ramesh Singh', mobile:'9876543210', category:'Fruits', productName:'Himalayan Peaches', price:160, imageRef:'peaches.jpg', status:'Pending', notes:'' },
+    { rowIndex:3, timestamp:'2024-03-16T08:45:00Z', sellerName:'Sunita Devi',  mobile:'9123456780', category:'Vegetables', productName:'Pahadi Rajma', price:120, imageRef:'rajma.jpg', status:'Verified', notes:'Documents verified' },
+    { rowIndex:4, timestamp:'2024-03-18T14:10:00Z', sellerName:'Mohan Negi',   mobile:'9988776655', category:'Fruits', productName:'Wild Kafal', price:220, imageRef:'kafal.jpg', status:'Pending', notes:'' }
+  ];
+}
+
+
+/* ════════════════════════════════════════════
+   LOGIN ALERT HELPERS
+════════════════════════════════════════════ */
+function showLoginAlert(type, msg) {
+  const el = document.getElementById('login-alert');
+  const icons = { error: 'fa-circle-xmark', success: 'fa-circle-check', info: 'fa-circle-info' };
+  el.className = `alert alert-${type} show`;
+  el.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+}
+function hideLoginAlert() {
+  document.getElementById('login-alert').className = 'alert';
+}
+
+
+/* ════════════════════════════════════════════
+   BUTTON LOADING
+════════════════════════════════════════════ */
+function setBtnLoading(btn, loading) {
+  if (!btn) return;
+  const spinner = btn.querySelector('.btn-spinner');
+  const text    = btn.querySelector('.btn-text');
+  btn.disabled  = loading;
+  if (spinner) spinner.style.display = loading ? 'inline-block' : 'none';
+  if (text && loading) text.textContent = 'Verifying…';
+}
+
+
+/* ════════════════════════════════════════════
+   ESCAPE HTML
+════════════════════════════════════════════ */
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

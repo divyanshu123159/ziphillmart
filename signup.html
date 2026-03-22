@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Register as a seller on ZiphillMart and sell your mountain produce directly." />
+  <title>Seller Registration — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .signup-page {
+      min-height: calc(100vh - 64px);
+      background: linear-gradient(160deg, var(--forest-deep) 0%, var(--forest) 50%, var(--forest-deep) 100%);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 3rem 1.25rem 4rem;
+    }
+    .signup-wrap { width: 100%; max-width: 560px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; font-weight: 500; color: var(--slate-500);
+      margin-bottom: 1.5rem; transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--lime); }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar" aria-label="Main navigation">
+  <div class="nav-grid">
+    <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
+    </button>
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
+    <div class="nav-right">
+      <div id="search-wrap">
+        <button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <input id="search-input" type="text" placeholder="Search…" aria-label="Search" />
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="drawer-overlay" aria-hidden="true"></div>
+<aside id="left-drawer" aria-label="Site navigation">
+  <div class="drawer-header">
+    <span class="drawer-logo">ZiphillMart</span>
+    <button id="drawer-close" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-date-strip dynamic-date"></div>
+  <nav class="drawer-nav">
+    <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="signup.html"    class="drawer-link" data-page="signup.html"><i class="fa-solid fa-user-plus"></i>Seller Registration</a>
+    <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
+    <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
+    <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+  </nav>
+  <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
+</aside>
+
+<div class="page-wrap" style="background:var(--forest-deep)">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="container" style="max-width:700px">
+      <div class="page-hero-eyebrow">Seller Portal</div>
+      <h1 class="page-hero-title">Join <span>ZiphillMart</span></h1>
+      <p class="page-hero-sub">List your mountain produce and connect directly with buyers across India.</p>
+    </div>
+  </div>
+
+  <main class="page-main">
+    <div class="signup-page">
+      <div class="signup-wrap">
+
+        <a href="index.html" class="back-link">
+          <i class="fa-solid fa-arrow-left"></i>Back to Home
+        </a>
+
+        <!-- Step Progress -->
+        <div class="step-tracker" data-reveal>
+          <div class="step-item active">
+            <div class="step-num">1</div>
+            <span>Your Info</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <span>Verify</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <span>Sign In</span>
+          </div>
+        </div>
+
+        <div class="form-card" data-reveal data-delay="1">
+
+          <!-- Alert -->
+          <div id="signup-alert" class="alert"></div>
+
+          <div class="form-title">Register as a <span>Seller</span></div>
+          <p class="form-subtitle">
+            Fill in your details. Your listing goes live after admin verification.
+          </p>
+
+          <form id="signup-form" novalidate>
+
+            <!-- Full Name -->
+            <div class="form-group">
+              <label class="form-label" for="seller-name">Full Name <span style="color:var(--lime)">*</span></label>
+              <div class="input-wrap">
+                <i class="input-icon fa-solid fa-user"></i>
+                <input class="form-input" type="text" id="seller-name" name="sellerName"
+                  placeholder="e.g. Ramesh Singh Rawat" required />
+              </div>
+            </div>
+
+            <!-- Mobile -->
+            <div class="form-group">
+              <label class="form-label" for="mobile">WhatsApp / Mobile <span style="color:var(--lime)">*</span></label>
+              <div class="input-wrap">
+                <i class="input-icon fa-solid fa-mobile-screen"></i>
+                <input class="form-input" type="tel" id="mobile" name="mobile"
+                  placeholder="10-digit number" maxlength="10" pattern="[0-9]{10}" required />
+              </div>
+            </div>
+
+            <!-- Category + Product Name -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="category">Category <span style="color:var(--lime)">*</span></label>
+                <select class="form-select" id="category" name="category" required>
+                  <option value="" disabled selected>Select…</option>
+                  <option value="Fruits">🍑 Fruits</option>
+                  <option value="Vegetables">🥦 Vegetables</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="product-name">Product Name <span style="color:var(--lime)">*</span></label>
+                <input class="form-input" type="text" id="product-name" name="productName"
+                  placeholder="e.g. Pahadi Peaches" required />
+              </div>
+            </div>
+
+            <!-- Price per KG -->
+            <div class="form-group">
+              <label class="form-label" for="price">Price per KG (₹) <span style="color:var(--lime)">*</span></label>
+              <div class="input-wrap has-prefix">
+                <span class="input-prefix">₹</span>
+                <input class="form-input" type="number" id="price" name="price"
+                  placeholder="e.g. 180" min="1" max="99999" required />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label class="form-label" for="password">Password <span style="color:var(--lime)">*</span></label>
+              <div class="input-wrap" style="position:relative">
+                <i class="input-icon fa-solid fa-lock"></i>
+                <input class="form-input" type="password" id="password" name="password"
+                  placeholder="Min 8 characters" style="padding-right:2.5rem" required />
+                <button type="button" class="pw-toggle" data-target="password"
+                  style="position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--slate-700);font-size:0.8rem;transition:color var(--transition)">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <!-- Strength meter -->
+              <div style="margin-top:0.5rem">
+                <div style="height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden">
+                  <div id="pw-strength-bar" style="height:100%;width:0%;border-radius:2px;transition:width 0.3s,background 0.3s"></div>
+                </div>
+                <div id="pw-strength-text" style="font-size:0.68rem;font-weight:600;margin-top:0.25rem;min-height:0.9rem"></div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label class="form-label" for="confirm-password">Confirm Password <span style="color:var(--lime)">*</span></label>
+              <div class="input-wrap" style="position:relative">
+                <i class="input-icon fa-solid fa-lock"></i>
+                <input class="form-input" type="password" id="confirm-password" name="confirmPassword"
+                  placeholder="Re-enter your password" style="padding-right:2.5rem" required />
+                <button type="button" class="pw-toggle" data-target="confirm-password"
+                  style="position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--slate-700);font-size:0.8rem;transition:color var(--transition)">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <div id="pw-match-hint" style="font-size:0.68rem;font-weight:600;margin-top:0.25rem;min-height:0.9rem"></div>
+            </div>
+
+            <!-- Product Photo -->
+            <div class="form-group">
+              <label class="form-label">Product Photo</label>
+              <label class="file-upload" tabindex="0">
+                <input type="file" id="product-photo" name="productPhoto" accept="image/*" />
+                <div class="file-upload-icon"><i class="fa-regular fa-image"></i></div>
+                <p class="file-upload-text">
+                  <strong>Click to upload</strong> or drag &amp; drop<br/>
+                  <span style="font-size:0.7rem;color:var(--slate-700)">JPG, PNG, WEBP · Max 5MB</span>
+                </p>
+                <div class="file-name-display"></div>
+              </label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-lime btn-full" style="margin-top:0.5rem;padding:0.82rem">
+              <div class="btn-spinner"></div>
+              <span class="btn-text">Register Now →</span>
+            </button>
+
+            <div class="form-divider">already registered?</div>
+
+            <a href="signin.html" class="btn btn-ghost btn-full">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span class="btn-text">Sign In to Dashboard</span>
+            </a>
+
+          </form>
+        </div>
+
+        <p style="text-align:center;font-size:0.72rem;color:var(--slate-700);margin-top:1.25rem" data-reveal data-delay="2">
+          <i class="fa-solid fa-lock" style="color:var(--lime);margin-right:0.3rem"></i>
+          Your data is never sold or shared.
+          <a href="privacy.html" style="color:var(--lime)">Privacy Policy</a>
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="font-size:0.9rem;margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
+        <div class="text-center"><div class="footer-date dynamic-date"></div></div>
+        <div class="footer-socials"><a href="https://instagram.com" class="social-btn" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
+        <div class="footer-links"><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="script.js"></script>
+</body>
+</html>

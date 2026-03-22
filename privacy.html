@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .toc {
+      background: var(--lime-bg); border: 1px solid rgba(164,230,29,0.15);
+      border-radius: var(--radius-md); padding: 1.25rem 1.5rem; margin-bottom: 2rem;
+    }
+    .toc-title { font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:0.75rem; }
+    .toc ol { list-style:decimal;padding-left:1.2rem; }
+    .toc ol li { margin-bottom:0.3rem; }
+    .toc ol li a { font-size:0.82rem;color:var(--slate-300);transition:color var(--transition); }
+    .toc ol li a:hover { color:var(--lime); }
+    .updated-badge { display:inline-flex;align-items:center;gap:0.4rem;background:var(--lime-bg);border:1px solid rgba(164,230,29,0.18);border-radius:var(--radius-full);padding:0.28rem 0.75rem;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;color:var(--lime);margin-bottom:1.5rem; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar">
+  <div class="nav-grid">
+    <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
+    </button>
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
+    <div class="nav-right"><div id="search-wrap"><button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button><input id="search-input" type="text" placeholder="Search…" /></div></div>
+  </div>
+</nav>
+
+<div id="drawer-overlay" aria-hidden="true"></div>
+<aside id="left-drawer">
+  <div class="drawer-header"><span class="drawer-logo">ZiphillMart</span><button id="drawer-close"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-date-strip dynamic-date"></div>
+  <nav class="drawer-nav">
+    <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="signup.html"    class="drawer-link" data-page="signup.html"><i class="fa-solid fa-user-plus"></i>Seller Registration</a>
+    <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
+    <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
+    <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+  </nav>
+  <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
+</aside>
+
+<div class="page-wrap">
+<main class="page-main">
+
+  <div class="page-hero">
+    <div class="container" style="max-width:700px">
+      <div class="page-hero-eyebrow">Legal</div>
+      <h1 class="page-hero-title">Privacy <span>Policy</span></h1>
+      <p class="page-hero-sub">How ZiphillMart collects, uses, and protects your information.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container" style="max-width:800px">
+
+      <div class="updated-badge" data-reveal>
+        <i class="fa-regular fa-calendar"></i>
+        Last updated: <span id="privacy-date"></span>
+      </div>
+
+      <!-- TOC -->
+      <div class="toc" data-reveal data-delay="1">
+        <div class="toc-title"><i class="fa-solid fa-list" style="margin-right:0.35rem"></i>Contents</div>
+        <ol>
+          <li><a href="#p1">Information We Collect</a></li>
+          <li><a href="#p2">How We Use Your Information</a></li>
+          <li><a href="#p3">Google Sheets &amp; Data Storage</a></li>
+          <li><a href="#p4">WhatsApp &amp; Third Parties</a></li>
+          <li><a href="#p5">Your Rights</a></li>
+          <li><a href="#p6">Cookies</a></li>
+          <li><a href="#p7">Contact Us</a></li>
+        </ol>
+      </div>
+
+      <p style="font-size:0.88rem;line-height:1.8;color:var(--slate-300);margin-bottom:1.5rem" data-reveal>
+        ZiphillMart ("we", "our", "us") is committed to protecting your privacy. This policy explains
+        what information we collect, how we use it, and your rights. By using ZiphillMart, you agree to this policy.
+      </p>
+
+      <!-- Section 1 -->
+      <div class="privacy-card" id="p1" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon"><i class="fa-solid fa-database"></i></div>
+          <div class="privacy-card-title">1. Information We Collect</div>
+        </div>
+        <p><strong style="color:var(--off-white)">From Buyers:</strong></p>
+        <ul>
+          <li>No personal data is collected from buyers browsing the marketplace.</li>
+          <li>WhatsApp order links redirect to WhatsApp's platform. We do not store those conversations.</li>
+        </ul>
+        <p style="margin-top:0.75rem"><strong style="color:var(--off-white)">From Sellers (during Registration):</strong></p>
+        <ul>
+          <li>Full name and mobile number — used for account identity.</li>
+          <li>Product details: category, name, and price per kilogram.</li>
+          <li>Product photograph name reference (file not uploaded to our servers).</li>
+          <li>ID card and farm proof documents — for verification only, reviewed by admin Divyanshu.</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="privacy-card" id="p2" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon"><i class="fa-solid fa-gears"></i></div>
+          <div class="privacy-card-title">2. How We Use Your Information</div>
+        </div>
+        <ul>
+          <li>To create and manage your seller account.</li>
+          <li>To display your products on the ZiphillMart marketplace.</li>
+          <li>To verify your identity and farm credentials before approval.</li>
+          <li>To contact you via WhatsApp about your account or listings.</li>
+          <li>To improve the ZiphillMart platform.</li>
+        </ul>
+        <p style="margin-top:0.75rem">We <strong style="color:var(--off-white)">never</strong> sell, rent, or share your personal data with advertisers or marketers.</p>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="privacy-card" id="p3" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon"><i class="fa-brands fa-google-drive"></i></div>
+          <div class="privacy-card-title">3. Google Sheets &amp; Data Storage</div>
+        </div>
+        <p>ZiphillMart uses Google Apps Script as a backend to store seller registrations in a Google Sheet. This means:</p>
+        <ul>
+          <li>Seller registration data (name, mobile, category, product, price) is written to a private Google Sheet accessible only by admin Divyanshu.</li>
+          <li>Data is stored on Google's servers subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--lime)">Google's Privacy Policy</a>.</li>
+          <li>The Google Sheet is not publicly accessible.</li>
+        </ul>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="privacy-card" id="p4" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon" style="background:rgba(37,211,102,0.1);color:#25D366"><i class="fa-brands fa-whatsapp"></i></div>
+          <div class="privacy-card-title">4. WhatsApp &amp; Third Parties</div>
+        </div>
+        <ul>
+          <li>Buy buttons redirect to WhatsApp, governed by <a href="https://www.whatsapp.com/legal/privacy-policy" target="_blank" rel="noopener" style="color:var(--lime)">WhatsApp's Privacy Policy</a>.</li>
+          <li>ZiphillMart does not access, intercept, or store WhatsApp conversations.</li>
+          <li>All transactions happen directly between buyer and farmer. ZiphillMart is not a party.</li>
+        </ul>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="privacy-card" id="p5" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon"><i class="fa-solid fa-user-shield"></i></div>
+          <div class="privacy-card-title">5. Your Rights</div>
+        </div>
+        <p>You have the right to:</p>
+        <ul>
+          <li><strong style="color:var(--off-white)">Access</strong> — Request a copy of data we hold about you.</li>
+          <li><strong style="color:var(--off-white)">Correction</strong> — Request corrections to inaccurate information.</li>
+          <li><strong style="color:var(--off-white)">Deletion</strong> — Request deletion of your seller account and data.</li>
+        </ul>
+        <p style="margin-top:0.75rem">Contact us via WhatsApp: <a href="https://wa.me/917983447349" style="color:var(--lime)">+91 79834 47349</a></p>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="privacy-card" id="p6" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon"><i class="fa-solid fa-cookie-bite"></i></div>
+          <div class="privacy-card-title">6. Cookies</div>
+        </div>
+        <p>ZiphillMart does not use tracking cookies, advertising cookies, or analytics services. We use <code style="background:var(--lime-bg);color:var(--lime);padding:0.1rem 0.4rem;border-radius:4px;font-size:0.78rem">sessionStorage</code> in your browser only to store your seller name for the dashboard greeting during your active session. This data is not transmitted to any server.</p>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="privacy-card" id="p7" data-reveal>
+        <div class="privacy-card-head">
+          <div class="privacy-icon" style="background:rgba(37,211,102,0.1);color:#25D366"><i class="fa-solid fa-envelope"></i></div>
+          <div class="privacy-card-title">7. Contact Us</div>
+        </div>
+        <ul>
+          <li><strong style="color:var(--off-white)">Admin:</strong> Divyanshu</li>
+          <li><strong style="color:var(--off-white)">WhatsApp:</strong> <a href="https://wa.me/917983447349" style="color:var(--lime)">+91 79834 47349</a></li>
+          <li><strong style="color:var(--off-white)">Location:</strong> Jakhnidhar, Tehri Garhwal, Uttarakhand, India</li>
+        </ul>
+        <p style="margin-top:0.75rem">We respond to all privacy requests within <strong style="color:var(--off-white)">48 hours</strong>.</p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
+      <div class="text-center"><div class="footer-date dynamic-date"></div></div>
+      <div class="footer-socials"><a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
+      <div class="footer-links"><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+    </div>
+  </div>
+</footer>
+</div>
+
+<button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<script>
+  // Set current date in the privacy page badge
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('privacy-date');
+    if (el) el.textContent = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>

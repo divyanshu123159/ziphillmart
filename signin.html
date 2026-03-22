@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Sign In — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .pw-toggle {
+      position:absolute; right:0.85rem; top:50%; transform:translateY(-50%);
+      background:none; border:none; cursor:pointer;
+      color:var(--slate-700); font-size:0.8rem; transition:color var(--transition);
+    }
+    .pw-toggle:hover { color:var(--lime); }
+    .input-wrap .pw-field { padding-right:2.5rem; }
+    .demo-note {
+      background:var(--lime-bg); border:1px solid rgba(164,230,29,0.2);
+      border-radius:var(--radius-sm); padding:0.65rem 0.85rem;
+      font-size:0.72rem; color:var(--lime); margin-bottom:1rem;
+    }
+    .signin-stats { display:flex; gap:1.5rem; margin-top:2rem; }
+    .signin-stat-num { font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--lime); }
+    .signin-stat-lbl { font-size:0.65rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar">
+  <div class="nav-grid">
+    <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
+    </button>
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
+    <div class="nav-right"><div id="search-wrap"><button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button><input id="search-input" type="text" placeholder="Search…" /></div></div>
+  </div>
+</nav>
+
+<div id="drawer-overlay" aria-hidden="true"></div>
+<aside id="left-drawer">
+  <div class="drawer-header"><span class="drawer-logo">ZiphillMart</span><button id="drawer-close"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-date-strip dynamic-date"></div>
+  <nav class="drawer-nav">
+    <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="signup.html"    class="drawer-link" data-page="signup.html"><i class="fa-solid fa-user-plus"></i>Seller Registration</a>
+    <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
+    <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
+    <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+  </nav>
+  <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
+</aside>
+
+<div class="page-wrap" style="display:block">
+<main>
+  <div class="signin-layout" style="padding-top:var(--nav-h)">
+
+    <!-- LEFT VISUAL -->
+    <div class="signin-visual">
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--lime);margin-bottom:2.5rem">
+          <i class="fa-solid fa-seedling" style="margin-right:0.35rem;opacity:0.85"></i>ZiphillMart
+        </div>
+        <div class="signin-visual-quote">
+          "Your harvest.<br/>
+          Your <em>price</em>.<br/>
+          Your market."
+        </div>
+        <p style="font-size:0.78rem;color:rgba(255,255,255,0.45);margin-top:0.75rem">
+          — ZiphillMart Seller Portal, Jakhnidhar
+        </p>
+        <div class="signin-stats">
+          <div>
+            <div class="signin-stat-num">50+</div>
+            <div class="signin-stat-lbl">Active Sellers</div>
+          </div>
+          <div>
+            <div class="signin-stat-num">₹0</div>
+            <div class="signin-stat-lbl">Commission</div>
+          </div>
+          <div>
+            <div class="signin-stat-num">100%</div>
+            <div class="signin-stat-lbl">Organic</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="signin-form-side">
+      <div style="width:100%;max-width:400px">
+
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--slate-500);margin-bottom:1.5rem;transition:color var(--transition)" onmouseover="this.style.color='var(--lime)'" onmouseout="this.style.color='var(--slate-500)'">
+          <i class="fa-solid fa-arrow-left"></i>Back to Home
+        </a>
+
+        <div class="form-card" data-reveal>
+
+          <div id="signin-alert" class="alert"></div>
+
+          <div class="form-title">Welcome <span>Back</span></div>
+          <p class="form-subtitle">Sign in to manage your ZiphillMart seller account.</p>
+
+          <form id="signin-form" novalidate>
+
+            <!-- Mobile -->
+            <div class="form-group">
+              <label class="form-label" for="signin-mobile">Registered Mobile Number</label>
+              <div class="input-wrap">
+                <i class="input-icon fa-solid fa-mobile-screen"></i>
+                <input class="form-input" type="tel" id="signin-mobile" name="mobile"
+                  placeholder="10-digit number" maxlength="10" required />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label class="form-label" for="signin-password">Password</label>
+              <div class="input-wrap" style="position:relative">
+                <i class="input-icon fa-solid fa-lock"></i>
+                <input class="form-input" type="password" id="signin-password"
+                  placeholder="Enter your password" style="padding-right:2.5rem" required />
+                <button type="button" class="pw-toggle" data-target="signin-password"
+                  style="position:absolute;right:0.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--slate-700);font-size:0.8rem;transition:color var(--transition)">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <a href="https://wa.me/917983447349?text=Hi!%20I%20forgot%20my%20ZiphillMart%20password.%20My%20mobile%20is%20" style="display:block;text-align:right;font-size:0.72rem;color:var(--lime);margin-top:0.4rem">
+                <i class="fa-brands fa-whatsapp" style="margin-right:0.2rem"></i>Forgot password? Contact admin
+              </a>
+            </div>
+
+            <button type="submit" class="btn btn-lime btn-full" style="padding:0.82rem;margin-top:0.25rem">
+              <div class="btn-spinner"></div>
+              <span class="btn-text"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Dashboard</span>
+            </button>
+
+            <div class="form-divider">or</div>
+
+            <a href="https://wa.me/917983447349?text=Hi!%20Please%20send%20me%20my%20ZiphillMart%20login%20OTP." class="btn btn-wa btn-full" style="justify-content:center;padding:0.72rem" target="_blank" rel="noopener">
+              <i class="fa-brands fa-whatsapp"></i>
+              <span class="btn-text">Get OTP via WhatsApp</span>
+            </a>
+
+          </form>
+        </div>
+
+        <p style="text-align:center;font-size:0.75rem;color:var(--slate-700);margin-top:1rem" data-reveal data-delay="1">
+          New seller?
+          <a href="signup.html" style="color:var(--lime);font-weight:600">Register here →</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
+      <div class="text-center"><div class="footer-date dynamic-date"></div></div>
+      <div class="footer-socials"><a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
+      <div class="footer-links"><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+    </div>
+  </div>
+</footer>
+</div>
+
+<button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="script.js"></script>
+</body>
+</html>

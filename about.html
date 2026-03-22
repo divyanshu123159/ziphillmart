@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar">
+  <div class="nav-grid">
+    <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
+    </button>
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
+    <div class="nav-right"><div id="search-wrap"><button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button><input id="search-input" type="text" placeholder="Search…" /></div></div>
+  </div>
+</nav>
+
+<div id="drawer-overlay" aria-hidden="true"></div>
+<aside id="left-drawer">
+  <div class="drawer-header"><span class="drawer-logo">ZiphillMart</span><button id="drawer-close"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-date-strip dynamic-date"></div>
+  <nav class="drawer-nav">
+    <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="signup.html"    class="drawer-link" data-page="signup.html"><i class="fa-solid fa-user-plus"></i>Seller Registration</a>
+    <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
+    <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
+    <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+  </nav>
+  <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
+</aside>
+
+<div class="page-wrap">
+<main class="page-main">
+
+  <div class="page-hero">
+    <div class="container" style="max-width:700px">
+      <div class="page-hero-eyebrow">Our Story</div>
+      <h1 class="page-hero-title">About <span>ZiphillMart</span></h1>
+      <p class="page-hero-sub">A mountain-to-table marketplace built in the heart of Jakhnidhar.</p>
+    </div>
+  </div>
+
+  <!-- ABOUT MAIN -->
+  <section class="section">
+    <div class="container" style="max-width:1000px">
+      <div class="about-grid" data-reveal>
+        <div class="about-img-wrap">
+          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80" alt="Mountain farm" loading="lazy" />
+        </div>
+        <div>
+          <div class="section-label">Who We Are</div>
+          <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);color:var(--off-white);letter-spacing:-0.02em;margin-bottom:1rem">
+            Rooted in the<br/><span style="color:var(--lime)">Himalayas</span>
+          </h2>
+          <p style="line-height:1.8;margin-bottom:0.85rem">
+            ZiphillMart was built from one simple belief: the farmers of Tehri Garhwal deserve a fair, direct
+            market for their chemical-free produce. Nestled in the ridges of <strong style="color:var(--off-white)">Jakhnidhar</strong>,
+            our partner farmers have cultivated these lands for generations.
+          </p>
+          <p style="line-height:1.8">
+            We connect farmers directly to buyers via WhatsApp — no warehouses, no markups, no middlemen.
+            Every purchase directly supports a farming family.
+          </p>
+          <div style="display:flex;gap:1.5rem;margin-top:1.75rem;flex-wrap:wrap">
+            <div>
+              <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--lime)">50+</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate-500)">Farmers</div>
+            </div>
+            <div style="width:1px;background:rgba(164,230,29,0.1)"></div>
+            <div>
+              <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--lime)">₹0</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate-500)">Commission</div>
+            </div>
+            <div style="width:1px;background:rgba(164,230,29,0.1)"></div>
+            <div>
+              <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--lime)">100%</div>
+              <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate-500)">Organic</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="section-sm" style="background:var(--forest);border-top:1px solid rgba(164,230,29,0.08);border-bottom:1px solid rgba(164,230,29,0.08)">
+    <div class="container" style="max-width:1000px">
+      <div class="text-center mb-4" data-reveal>
+        <div class="section-label" style="justify-content:center">What Drives Us</div>
+        <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);color:var(--off-white);letter-spacing:-0.02em">Our Core Values</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem">
+        <div class="value-card" data-reveal data-delay="1">
+          <div class="value-icon"><i class="fa-solid fa-handshake-simple"></i></div>
+          <div class="value-title">Direct Trade</div>
+          <div class="value-desc">Every transaction goes straight from farmer to buyer. Zero commission. Zero exploitation.</div>
+        </div>
+        <div class="value-card" data-reveal data-delay="2">
+          <div class="value-icon"><i class="fa-solid fa-leaf"></i></div>
+          <div class="value-title">100% Organic</div>
+          <div class="value-desc">Every seller is verified. Only traditional, chemical-free farming practices allowed.</div>
+        </div>
+        <div class="value-card" data-reveal data-delay="3">
+          <div class="value-icon"><i class="fa-solid fa-mountain-sun"></i></div>
+          <div class="value-title">Mountain Authenticity</div>
+          <div class="value-desc">Only genuine Himalayan produce from verified Tehri Garhwal farmers. Traceable to the source.</div>
+        </div>
+        <div class="value-card" data-reveal data-delay="4">
+          <div class="value-icon" style="background:rgba(37,211,102,0.1);color:#25D366"><i class="fa-brands fa-whatsapp"></i></div>
+          <div class="value-title">Simple by Design</div>
+          <div class="value-desc">Farmers use WhatsApp — so we built around it. No complex apps. Just list and sell.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="section">
+    <div class="container" style="max-width:700px">
+      <div class="text-center mb-4" data-reveal>
+        <div class="section-label" style="justify-content:center">The Builder</div>
+        <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);color:var(--off-white);letter-spacing:-0.02em">Admin &amp; Developer</h2>
+      </div>
+      <div style="background:var(--forest);border:1px solid rgba(164,230,29,0.12);border-radius:var(--radius-xl);padding:2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap" data-reveal data-delay="1">
+        <div style="width:4rem;height:4rem;border-radius:50%;background:linear-gradient(135deg,var(--forest-light),var(--lime-muted));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--forest-deep);flex-shrink:0">D</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--off-white)">Divyanshu</div>
+          <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--lime);margin-top:0.15rem">Founder · Admin · Developer</div>
+          <p style="font-size:0.8rem;margin-top:0.5rem;line-height:1.6">Full-stack web developer and entrepreneur from Uttarakhand building digital infrastructure for Himalayan farming communities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-sm" style="padding:3rem 1.25rem">
+    <div class="container" style="max-width:700px">
+      <div class="seller-cta" data-reveal>
+        <div class="section-label" style="justify-content:center;margin-bottom:0.75rem">Join Us</div>
+        <h2 style="font-size:clamp(1.5rem,3vw,2rem);color:var(--off-white);letter-spacing:-0.02em;margin-bottom:0.5rem">
+          Be Part of <span style="color:var(--lime)">ZiphillMart</span>
+        </h2>
+        <p style="font-size:0.85rem;color:var(--slate-500);max-width:400px;margin:0 auto 1.5rem">
+          Whether you're a farmer ready to sell or a buyer seeking authentic mountain produce.
+        </p>
+        <div style="display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap">
+          <a href="signup.html" class="btn btn-lime btn-lg"><i class="fa-solid fa-store"></i><span class="btn-text">Become a Seller</span></a>
+          <a href="index.html#produce" class="btn btn-ghost btn-lg"><i class="fa-solid fa-basket-shopping"></i><span class="btn-text">Browse Produce</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
+      <div class="text-center"><div class="footer-date dynamic-date"></div></div>
+      <div class="footer-socials"><a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
+      <div class="footer-links"><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+    </div>
+  </div>
+</footer>
+</div>
+
+<button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<script src="script.js"></script>
+</body>
+</html>

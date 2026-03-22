@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Dashboard — ZiphillMart</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .sidebar-user {
+      margin: 0 1rem 1rem;
+      background: rgba(164,230,29,0.06);
+      border: 1px solid rgba(164,230,29,0.1);
+      border-radius: var(--radius-md); padding: 1rem;
+    }
+    .user-avatar {
+      width: 2.8rem; height: 2.8rem; border-radius: 50%;
+      background: linear-gradient(135deg, var(--forest-light), var(--lime-muted));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
+      color: var(--forest-deep); margin-bottom: 0.5rem;
+    }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: var(--off-white); }
+    .user-status { display:flex;align-items:center;gap:0.3rem;font-size:0.68rem;color:var(--slate-500);margin-top:0.15rem; }
+    .status-dot { width:6px;height:6px;border-radius:50%;background:var(--lime); }
+
+    /* Pending notice */
+    .pending-notice {
+      background: rgba(245,166,35,0.08);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .pending-notice i { color: var(--warning); font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .pending-notice-text { font-size: 0.82rem; color: var(--slate-300); }
+    .pending-notice-text strong { color: var(--off-white); display: block; margin-bottom: 0.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar">
+  <div class="nav-grid">
+    <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
+    </button>
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
+    <div class="nav-right"><div id="search-wrap"><button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button><input id="search-input" type="text" placeholder="Search…" /></div></div>
+  </div>
+</nav>
+
+<div id="drawer-overlay" aria-hidden="true"></div>
+<aside id="left-drawer">
+  <div class="drawer-header"><span class="drawer-logo">ZiphillMart</span><button id="drawer-close"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-date-strip dynamic-date"></div>
+  <nav class="drawer-nav">
+    <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="signup.html"    class="drawer-link" data-page="signup.html"><i class="fa-solid fa-user-plus"></i>Seller Registration</a>
+    <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
+    <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
+    <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+  </nav>
+  <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
+</aside>
+
+<div class="page-wrap" style="display:block">
+<main>
+<div class="dash-layout" style="margin-top:var(--nav-h)">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div class="sidebar-user">
+      <div class="user-avatar" id="dash-avatar">S</div>
+      <div class="user-name" id="dash-seller-name">Seller</div>
+      <div class="user-status"><span class="status-dot"></span>Pending Verification</div>
+    </div>
+
+    <div class="sidebar-label">Dashboard</div>
+    <a href="#" class="sidebar-link active"><i class="fa-solid fa-gauge-high"></i>Overview</a>
+    <a href="#" class="sidebar-link"><i class="fa-solid fa-box-open"></i>My Products</a>
+    <a href="#" class="sidebar-link"><i class="fa-brands fa-whatsapp"></i>WhatsApp Inquiries</a>
+
+    <div class="sidebar-label">Account</div>
+    <a href="#" class="sidebar-link"><i class="fa-solid fa-user-pen"></i>Edit Profile</a>
+    <a href="verification.html" class="sidebar-link"><i class="fa-solid fa-shield-halved"></i>Verification</a>
+    <a href="#" class="sidebar-link"><i class="fa-solid fa-gear"></i>Settings</a>
+    <a href="signin.html" class="sidebar-link" style="margin-top:auto">
+      <i class="fa-solid fa-right-from-bracket"></i>Sign Out
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="dash-main">
+
+    <!-- Welcome Header -->
+    <div class="dash-welcome" data-reveal>
+      <div style="position:relative;z-index:1">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:0.35rem">
+          Seller Dashboard
+        </div>
+        <div class="dash-welcome-name">
+          Welcome, <span id="dash-welcome-name">Seller</span>!
+        </div>
+        <div class="dash-welcome-sub dynamic-date"></div>
+      </div>
+    </div>
+
+    <!-- Pending Verification Notice -->
+    <div class="pending-notice" data-reveal data-delay="1">
+      <i class="fa-solid fa-clock"></i>
+      <div class="pending-notice-text">
+        <strong>Account Pending Verification</strong>
+        Your documents have been submitted. Our admin will verify your account within 24 hours.
+        After verification, your products will go live on ZiphillMart.
+        <a href="https://wa.me/917983447349?text=Hi!%20I%20registered%20on%20ZiphillMart%20and%20want%20to%20check%20my%20verification%20status." target="_blank" rel="noopener" style="color:var(--lime);font-weight:600;display:inline-block;margin-top:0.35rem">
+          <i class="fa-brands fa-whatsapp" style="margin-right:0.25rem"></i>Check Status on WhatsApp →
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dash-stat-grid" data-reveal data-delay="2">
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><i class="fa-solid fa-box-open"></i></div>
+        <div class="dash-stat-val">0</div>
+        <div class="dash-stat-label">Active Products</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></div>
+        <div class="dash-stat-val">0</div>
+        <div class="dash-stat-label">Inquiries</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon"><i class="fa-solid fa-eye"></i></div>
+        <div class="dash-stat-val">0</div>
+        <div class="dash-stat-label">Total Views</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-icon" style="background:rgba(245,166,35,0.1);color:var(--warning)"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="dash-stat-val" style="font-size:1.1rem;color:var(--warning)">Pending</div>
+        <div class="dash-stat-label">Verification</div>
+      </div>
+    </div>
+
+    <!-- Your Products Table — CLEAN STATE -->
+    <div class="table-card" data-reveal data-delay="3">
+      <div class="table-header">
+        <div class="table-title">
+          <i class="fa-solid fa-box-open" style="color:var(--lime);margin-right:0.5rem"></i>
+          Your Products
+        </div>
+        <a href="signup.html" class="btn btn-ghost btn-sm">
+          <i class="fa-solid fa-plus"></i>Add Product
+        </a>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+        <div class="empty-title">No products verified yet.</div>
+        <div class="empty-sub">
+          Once our admin verifies your account, your products will appear here.
+        </div>
+        <a href="https://wa.me/917983447349?text=Hi!%20I%20have%20registered%20on%20ZiphillMart.%20Please%20verify%20my%20account." class="btn btn-ghost btn-sm" style="margin-top:1.1rem" target="_blank" rel="noopener">
+          <i class="fa-brands fa-whatsapp"></i>Contact Admin
+        </a>
+      </div>
+    </div>
+
+    <!-- Help Card -->
+    <div style="margin-top:1.25rem;background:var(--forest);border:1px solid rgba(164,230,29,0.1);border-radius:var(--radius-lg);padding:1.25rem" data-reveal data-delay="4">
+      <div style="font-size:0.85rem;font-weight:700;color:var(--off-white);margin-bottom:0.5rem">
+        <i class="fa-solid fa-headset" style="color:var(--lime);margin-right:0.4rem"></i>Need Help?
+      </div>
+      <p style="font-size:0.78rem;color:var(--slate-500);margin-bottom:0.85rem">
+        Our team is on WhatsApp. Reach out for verification status, product listing help, or any questions.
+      </p>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap">
+        <a href="https://wa.me/917983447349" class="btn btn-wa btn-sm" target="_blank" rel="noopener">
+          <i class="fa-brands fa-whatsapp"></i>WhatsApp Support
+        </a>
+        <a href="verification.html" class="btn btn-ghost btn-sm">
+          <i class="fa-solid fa-upload"></i>Re-upload Docs
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</main>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
+      <div class="text-center"><div class="footer-date dynamic-date"></div></div>
+      <div class="footer-socials"><a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
+      <div class="footer-links"><a href="privacy.html">Privacy</a><a href="about.html">About</a></div>
+    </div>
+  </div>
+</footer>
+</div>
+
+<button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+  // Sync welcome name from both elements
+  document.addEventListener('DOMContentLoaded', () => {
+    const name = sessionStorage.getItem('zm_seller_name') || 'Seller';
+    const els = [
+      document.getElementById('dash-seller-name'),
+      document.getElementById('dash-welcome-name')
+    ];
+    els.forEach(el => { if (el) el.textContent = name; });
+    // Avatar initial
+    const av = document.getElementById('dash-avatar');
+    if (av) av.textContent = name.charAt(0).toUpperCase();
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>
