@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
+    /* ── Sidebar user card ── */
     .sidebar-user {
       margin: 0 1rem 1rem;
       background: rgba(164,230,29,0.06);
@@ -21,41 +22,138 @@
       font-family: var(--font-display); font-size: 1.1rem; font-weight: 800;
       color: var(--forest-deep); margin-bottom: 0.5rem;
     }
-    .user-name { font-size: 0.85rem; font-weight: 600; color: var(--off-white); }
+    .user-name   { font-size: 0.85rem; font-weight: 600; color: var(--off-white); }
     .user-status { display:flex;align-items:center;gap:0.3rem;font-size:0.68rem;color:var(--slate-500);margin-top:0.15rem; }
-    .status-dot { width:6px;height:6px;border-radius:50%;background:var(--lime); }
+    .status-dot  { width:6px;height:6px;border-radius:50%; }
+    .dot-pending  { background: var(--warning); }
+    .dot-verified { background: var(--lime); }
 
-    /* Pending notice */
-    .pending-notice {
-      background: rgba(245,166,35,0.08);
-      border: 1px solid rgba(245,166,35,0.2);
-      border-radius: var(--radius-md);
-      padding: 1rem 1.25rem;
-      display: flex; align-items: flex-start; gap: 0.8rem;
+    /* ── Status notices ── */
+    .notice {
+      border-radius: var(--radius-md); padding: 1rem 1.25rem;
+      display: flex; align-items: flex-start; gap: 0.8rem; margin-bottom: 1.5rem;
+    }
+    .notice-warn    { background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); }
+    .notice-success { background:rgba(164,230,29,0.07); border:1px solid rgba(164,230,29,0.2); }
+    .notice i { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .notice-warn i    { color: var(--warning); }
+    .notice-success i { color: var(--lime); }
+    .notice-text      { font-size: 0.82rem; color: var(--slate-300); }
+    .notice-text strong { color: var(--off-white); display: block; margin-bottom: 0.2rem; }
+
+    /* ── Products table inside dashboard ── */
+    .prod-table { width: 100%; border-collapse: collapse; }
+    .prod-table th {
+      text-align: left; padding: 0.65rem 1rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--slate-500);
+      background: rgba(164,230,29,0.03);
+      border-bottom: 1px solid rgba(164,230,29,0.08);
+    }
+    .prod-table td {
+      padding: 0.85rem 1rem; font-size: 0.82rem; color: var(--slate-300);
+      border-bottom: 1px solid rgba(164,230,29,0.05); vertical-align: middle;
+    }
+    .prod-table tr:last-child td { border-bottom: none; }
+    .prod-table tr:hover td { background: rgba(164,230,29,0.03); }
+    .prod-name  { font-weight: 600; color: var(--off-white); }
+    .prod-price { font-weight: 700; color: var(--lime); }
+
+    /* ── ADD PRODUCT MODAL ── */
+    #add-product-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 1000;
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.2s ease;
+    }
+    #add-product-modal.open { display: flex; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .modal-card {
+      background: var(--forest);
+      border: 1px solid rgba(164,230,29,0.15);
+      border-radius: var(--radius-xl); padding: 2rem;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      animation: slideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(20px) scale(0.97); }
+      to   { opacity:1; transform: none; }
+    }
+    .modal-head {
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 1.5rem;
     }
-    .pending-notice i { color: var(--warning); font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
-    .pending-notice-text { font-size: 0.82rem; color: var(--slate-300); }
-    .pending-notice-text strong { color: var(--off-white); display: block; margin-bottom: 0.2rem; }
+    .modal-title {
+      font-family: var(--font-display); font-size: 1.4rem; font-weight: 800;
+      color: var(--off-white); letter-spacing: -0.02em;
+    }
+    .modal-title span { color: var(--lime); }
+    .modal-close {
+      background: rgba(164,230,29,0.08); border: 1px solid rgba(164,230,29,0.15);
+      color: var(--slate-300); width: 2rem; height: 2rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.85rem;
+      transition: all var(--transition);
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+    /* Skeleton rows for products table */
+    .skel-row td { padding: 0.85rem 1rem; }
+    .skel-line {
+      height: 0.65rem; border-radius: 4px;
+      background: rgba(164,230,29,0.06);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+    /* Status pill (reuse from admin) */
+    .s-pill {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 0.2rem 0.6rem; border-radius: 99rem;
+    }
+    .s-pill::before { content:''; width:5px; height:5px; border-radius:50%; }
+    .s-Pending   { background:rgba(245,158,11,0.12); color:#fbbf24; }
+    .s-Pending::before   { background:#fbbf24; }
+    .s-Verified  { background:rgba(34,197,94,0.12);  color:#4ade80; }
+    .s-Verified::before  { background:#4ade80; }
+    .s-Rejected  { background:rgba(239,68,68,0.12);  color:#f87171; }
+    .s-Rejected::before  { background:#f87171; }
   </style>
 </head>
 <body>
 
 <div id="progress-bar"></div>
 
+<!-- NAVBAR -->
 <nav id="navbar">
   <div class="nav-grid">
     <button id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
       <span class="ham-bar"></span><span class="ham-bar"></span><span class="ham-bar"></span>
     </button>
-    <a href="index.html" class="nav-brand"><i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart</a>
-    <div class="nav-right"><div id="search-wrap"><button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button><input id="search-input" type="text" placeholder="Search…" /></div></div>
+    <a href="index.html" class="nav-brand">
+      <i class="fa-solid fa-seedling" style="font-size:1rem;opacity:0.85"></i>ZiphillMart
+    </a>
+    <div class="nav-right">
+      <div id="search-wrap">
+        <button id="search-toggle" aria-label="Toggle search"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <input id="search-input" type="text" placeholder="Search…" />
+      </div>
+    </div>
   </div>
 </nav>
 
+<!-- LEFT DRAWER -->
 <div id="drawer-overlay" aria-hidden="true"></div>
 <aside id="left-drawer">
-  <div class="drawer-header"><span class="drawer-logo">ZiphillMart</span><button id="drawer-close"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="drawer-header">
+    <span class="drawer-logo">ZiphillMart</span>
+    <button id="drawer-close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
   <div class="drawer-date-strip dynamic-date"></div>
   <nav class="drawer-nav">
     <a href="index.html"     class="drawer-link" data-page="index.html"><i class="fa-solid fa-house"></i>Home</a>
@@ -63,11 +161,87 @@
     <a href="dashboard.html" class="drawer-link" data-page="dashboard.html"><i class="fa-solid fa-gauge-high"></i>Seller Dashboard</a>
     <a href="about.html"     class="drawer-link" data-page="about.html"><i class="fa-solid fa-circle-info"></i>About ZiphillMart</a>
     <a href="privacy.html"   class="drawer-link" data-page="privacy.html"><i class="fa-solid fa-shield-halved"></i>Privacy Policy</a>
-    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact & Help</a>
+    <a href="index.html#contact" class="drawer-link"><i class="fa-solid fa-headset"></i>Contact &amp; Help</a>
+    <a href="admin.html" class="drawer-link" data-page="admin.html" style="margin-top:0.5rem;border-top:1px solid rgba(164,230,29,0.08);padding-top:0.85rem"><i class="fa-solid fa-shield-halved" style="color:#f59e0b"></i><span style="color:#fbbf24">Admin Panel</span></a>
   </nav>
   <div class="drawer-footer-strip">Jakhnidhar, Tehri Garhwal</div>
 </aside>
 
+<!-- ════════════ ADD PRODUCT MODAL ════════════ -->
+<div id="add-product-modal" role="dialog" aria-modal="true" aria-label="Add new product">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title">Add <span>New Product</span></div>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="modal-alert" class="alert" style="margin-bottom:1rem"></div>
+
+    <p style="font-size:0.78rem;color:var(--slate-500);margin-bottom:1.4rem;line-height:1.6">
+      Your name and mobile are already saved. Just fill in the new product details —
+      Admin will verify before it goes live.
+    </p>
+
+    <form id="add-product-form" novalidate>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label class="form-label" for="new-category">Category <span style="color:var(--lime)">*</span></label>
+        <select class="form-select" id="new-category" required>
+          <option value="" disabled selected>Select…</option>
+          <option value="Fruits">🍑 Fruits</option>
+          <option value="Vegetables">🥦 Vegetables</option>
+        </select>
+      </div>
+
+      <!-- Product Name -->
+      <div class="form-group">
+        <label class="form-label" for="new-product-name">Product Name <span style="color:var(--lime)">*</span></label>
+        <div class="input-wrap">
+          <i class="input-icon fa-solid fa-seedling"></i>
+          <input class="form-input" type="text" id="new-product-name"
+            placeholder="e.g. Wild Kafal, Pahadi Garlic" required />
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label class="form-label" for="new-price">Price per KG (₹) <span style="color:var(--lime)">*</span></label>
+        <div class="input-wrap has-prefix">
+          <span class="input-prefix">₹</span>
+          <input class="form-input" type="number" id="new-price"
+            placeholder="e.g. 150" min="1" max="99999" required />
+        </div>
+      </div>
+
+      <!-- Product Photo -->
+      <div class="form-group">
+        <label class="form-label">Product Photo <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--slate-700)">(optional)</span></label>
+        <label class="file-upload" tabindex="0">
+          <input type="file" id="new-product-photo" accept="image/*" />
+          <div class="file-upload-icon"><i class="fa-regular fa-image"></i></div>
+          <p class="file-upload-text"><strong>Click to upload</strong> or drag &amp; drop</p>
+          <div class="file-name-display"></div>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:0.65rem;margin-top:0.5rem">
+        <button type="button" id="modal-cancel-btn" class="btn btn-ghost" style="flex:1;justify-content:center">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-lime" style="flex:2;justify-content:center;padding:0.8rem">
+          <div class="btn-spinner"></div>
+          <span class="btn-text"><i class="fa-solid fa-plus"></i> Submit Product</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ════════════ PAGE ════════════ -->
 <div class="page-wrap" style="display:block">
 <main>
 <div class="dash-layout" style="margin-top:var(--nav-h)">
@@ -77,21 +251,24 @@
     <div class="sidebar-user">
       <div class="user-avatar" id="dash-avatar">S</div>
       <div class="user-name" id="dash-seller-name">Seller</div>
-      <div class="user-status"><span class="status-dot"></span>Pending Verification</div>
+      <div class="user-status" id="dash-status-row">
+        <span class="status-dot dot-pending"></span>
+        <span id="dash-status-text">Pending Verification</span>
+      </div>
     </div>
 
     <div class="sidebar-label">Dashboard</div>
     <a href="#" class="sidebar-link active"><i class="fa-solid fa-gauge-high"></i>Overview</a>
+    <a href="#" class="sidebar-link" id="sidebar-add-btn" style="display:none">
+      <i class="fa-solid fa-plus" style="color:var(--lime)"></i>
+      <span style="color:var(--lime)">Add New Product</span>
+    </a>
     <a href="#" class="sidebar-link"><i class="fa-solid fa-box-open"></i>My Products</a>
-    <a href="#" class="sidebar-link"><i class="fa-brands fa-whatsapp"></i>WhatsApp Inquiries</a>
+    <a href="#" class="sidebar-link"><i class="fa-brands fa-whatsapp"></i>Inquiries</a>
 
     <div class="sidebar-label">Account</div>
-    <a href="#" class="sidebar-link"><i class="fa-solid fa-user-pen"></i>Edit Profile</a>
     <a href="verification.html" class="sidebar-link"><i class="fa-solid fa-shield-halved"></i>Verification</a>
-    <a href="#" class="sidebar-link"><i class="fa-solid fa-gear"></i>Settings</a>
-    <a href="signin.html" class="sidebar-link" style="margin-top:auto">
-      <i class="fa-solid fa-right-from-bracket"></i>Sign Out
-    </a>
+    <a href="#" class="sidebar-link signout-btn"><i class="fa-solid fa-right-from-bracket"></i>Sign Out</a>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -99,78 +276,79 @@
 
     <!-- Welcome Header -->
     <div class="dash-welcome" data-reveal>
-      <div style="position:relative;z-index:1">
-        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:0.35rem">
-          Seller Dashboard
+      <div style="position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:0.35rem">
+            Seller Dashboard
+          </div>
+          <div class="dash-welcome-name">
+            Welcome, <span id="dash-welcome-name">Seller</span>!
+          </div>
+          <div class="dash-welcome-sub dynamic-date"></div>
         </div>
-        <div class="dash-welcome-name">
-          Welcome, <span id="dash-welcome-name">Seller</span>!
-        </div>
-        <div class="dash-welcome-sub dynamic-date"></div>
+        <!-- Add New Product button — visible only when Verified -->
+        <button id="add-product-btn" class="btn btn-lime"
+          style="display:none;align-self:center;padding:0.65rem 1.2rem">
+          <i class="fa-solid fa-plus"></i>Add New Product
+        </button>
       </div>
     </div>
 
-    <!-- Pending Verification Notice -->
-    <div class="pending-notice" data-reveal data-delay="1">
-      <i class="fa-solid fa-clock"></i>
-      <div class="pending-notice-text">
-        <strong>Account Pending Verification</strong>
-        Your documents have been submitted. Our admin will verify your account within 24 hours.
-        After verification, your products will go live on ZiphillMart.
-        <a href="https://wa.me/917983447349?text=Hi!%20I%20registered%20on%20ZiphillMart%20and%20want%20to%20check%20my%20verification%20status." target="_blank" rel="noopener" style="color:var(--lime);font-weight:600;display:inline-block;margin-top:0.35rem">
-          <i class="fa-brands fa-whatsapp" style="margin-right:0.25rem"></i>Check Status on WhatsApp →
-        </a>
-      </div>
+    <!-- STATUS NOTICE (dynamic — pending or verified) -->
+    <div id="status-notice" data-reveal data-delay="1">
+      <!-- Injected by JS -->
     </div>
 
     <!-- Stats Grid -->
     <div class="dash-stat-grid" data-reveal data-delay="2">
       <div class="dash-stat">
         <div class="dash-stat-icon"><i class="fa-solid fa-box-open"></i></div>
-        <div class="dash-stat-val">0</div>
-        <div class="dash-stat-label">Active Products</div>
+        <div class="dash-stat-val" id="stat-product-count">—</div>
+        <div class="dash-stat-label">My Products</div>
       </div>
       <div class="dash-stat">
-        <div class="dash-stat-icon"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></div>
-        <div class="dash-stat-val">0</div>
-        <div class="dash-stat-label">Inquiries</div>
+        <div class="dash-stat-icon" style="background:rgba(34,197,94,0.1);color:#4ade80">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="dash-stat-val" id="stat-verified-count" style="color:#4ade80">—</div>
+        <div class="dash-stat-label">Live Products</div>
       </div>
       <div class="dash-stat">
-        <div class="dash-stat-icon"><i class="fa-solid fa-eye"></i></div>
-        <div class="dash-stat-val">0</div>
-        <div class="dash-stat-label">Total Views</div>
+        <div class="dash-stat-icon" style="background:rgba(245,158,11,0.1);color:#fbbf24">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="dash-stat-val" id="stat-pending-count" style="color:#fbbf24">—</div>
+        <div class="dash-stat-label">Pending</div>
       </div>
       <div class="dash-stat">
-        <div class="dash-stat-icon" style="background:rgba(245,166,35,0.1);color:var(--warning)"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="dash-stat-val" style="font-size:1.1rem;color:var(--warning)">Pending</div>
-        <div class="dash-stat-label">Verification</div>
+        <div class="dash-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="dash-stat-val" id="stat-account-status" style="font-size:0.9rem">—</div>
+        <div class="dash-stat-label">Account Status</div>
       </div>
     </div>
 
-    <!-- Your Products Table — CLEAN STATE -->
+    <!-- Your Products Table -->
     <div class="table-card" data-reveal data-delay="3">
       <div class="table-header">
         <div class="table-title">
           <i class="fa-solid fa-box-open" style="color:var(--lime);margin-right:0.5rem"></i>
           Your Products
         </div>
-        <a href="signup.html" class="btn btn-ghost btn-sm">
-          <i class="fa-solid fa-plus"></i>Add Product
-        </a>
+        <button id="table-add-btn" class="btn btn-lime btn-sm" style="display:none">
+          <i class="fa-solid fa-plus"></i>Add New
+        </button>
       </div>
 
-      <!-- Empty State -->
-      <div class="empty-state">
-        <div class="empty-icon">
-          <i class="fa-solid fa-box-open"></i>
-        </div>
-        <div class="empty-title">No products verified yet.</div>
-        <div class="empty-sub">
-          Once our admin verifies your account, your products will appear here.
-        </div>
-        <a href="https://wa.me/917983447349?text=Hi!%20I%20have%20registered%20on%20ZiphillMart.%20Please%20verify%20my%20account." class="btn btn-ghost btn-sm" style="margin-top:1.1rem" target="_blank" rel="noopener">
-          <i class="fa-brands fa-whatsapp"></i>Contact Admin
-        </a>
+      <!-- Table or empty/loading state -->
+      <div id="products-area">
+        <!-- Loading skeleton -->
+        <table class="prod-table" id="products-skeleton">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr class="skel-row"><td><div class="skel-line" style="width:60%"></div></td><td><div class="skel-line" style="width:50%"></div></td><td><div class="skel-line" style="width:35%"></div></td><td><div class="skel-line" style="width:45%"></div></td></tr>
+            <tr class="skel-row"><td><div class="skel-line" style="width:70%"></div></td><td><div class="skel-line" style="width:40%"></div></td><td><div class="skel-line" style="width:30%"></div></td><td><div class="skel-line" style="width:50%"></div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -180,11 +358,11 @@
         <i class="fa-solid fa-headset" style="color:var(--lime);margin-right:0.4rem"></i>Need Help?
       </div>
       <p style="font-size:0.78rem;color:var(--slate-500);margin-bottom:0.85rem">
-        Our team is on WhatsApp. Reach out for verification status, product listing help, or any questions.
+        Contact admin for verification status, product listing help, or any questions.
       </p>
       <div style="display:flex;gap:0.65rem;flex-wrap:wrap">
         <a href="https://wa.me/917983447349" class="btn btn-wa btn-sm" target="_blank" rel="noopener">
-          <i class="fa-brands fa-whatsapp"></i>WhatsApp Support
+          <i class="fa-brands fa-whatsapp"></i>WhatsApp Admin
         </a>
         <a href="verification.html" class="btn btn-ghost btn-sm">
           <i class="fa-solid fa-upload"></i>Re-upload Docs
@@ -192,8 +370,8 @@
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /dash-main -->
+</div><!-- /dash-layout -->
 </main>
 
 <footer id="site-footer">
@@ -201,7 +379,11 @@
     <div class="footer-grid">
       <div><div class="footer-brand"><i class="fa-solid fa-seedling" style="margin-right:0.35rem"></i>ZiphillMart</div><div class="footer-slogan">"Connecting Mountains to Markets."</div></div>
       <div class="text-center"><div class="footer-date dynamic-date"></div></div>
-      <div class="footer-socials"><a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a></div>
+      <div class="footer-socials">
+        <a href="https://instagram.com" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://wa.me/917983447349" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="tel:+917983447349" class="social-btn"><i class="fa-solid fa-phone"></i></a>
+      </div>
     </div>
     <div class="footer-bottom">
       <div class="footer-credit">Admin &amp; Developer: <strong style="color:var(--lime)">Divyanshu</strong></div>
@@ -209,24 +391,9 @@
     </div>
   </div>
 </footer>
-</div>
+</div><!-- /page-wrap -->
 
 <button id="back-top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
-
-<script>
-  // Sync welcome name from both elements
-  document.addEventListener('DOMContentLoaded', () => {
-    const name = sessionStorage.getItem('zm_seller_name') || 'Seller';
-    const els = [
-      document.getElementById('dash-seller-name'),
-      document.getElementById('dash-welcome-name')
-    ];
-    els.forEach(el => { if (el) el.textContent = name; });
-    // Avatar initial
-    const av = document.getElementById('dash-avatar');
-    if (av) av.textContent = name.charAt(0).toUpperCase();
-  });
-</script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 /* ═══════════════════════════════════════════════════════════════
    ZIPHILLMART — Global JavaScript (script.js)
    Auth: SHA-256 password hashing (client) + GAS verification
@@ -85,20 +86,65 @@ document.addEventListener('DOMContentLoaded', () => {
       const icon = searchToggle.querySelector('i');
       if (icon) icon.className = searchIsOpen
         ? 'fa-solid fa-xmark' : 'fa-solid fa-magnifying-glass';
-      if (searchIsOpen) setTimeout(() => searchInput.focus(), 380);
-      else searchInput.value = '';
+      if (searchIsOpen) {
+        setTimeout(() => searchInput.focus(), 380);
+      } else {
+        // Clear input and restore all hidden cards
+        searchInput.value = '';
+        document.querySelectorAll('.product-card').forEach(c => c.style.display = '');
+        document.querySelectorAll('.search-no-results').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.prod-table tbody tr').forEach(r => r.style.display = '');
+      }
     };
     searchToggle.addEventListener('click', () => toggleSearch());
     document.addEventListener('click', e => {
       const wrap = document.getElementById('search-wrap');
-      if (searchIsOpen && wrap && !wrap.contains(e.target)) toggleSearch(false);
+      if (searchIsOpen && wrap && !wrap.contains(e.target)) {
+        // Don't auto-close if there's an active search query
+        if (!searchInput.value.trim()) toggleSearch(false);
+      }
     });
     searchInput.addEventListener('input', () => {
       const q = searchInput.value.trim().toLowerCase();
+
+      // Search product cards (dynamically rendered on index.html)
       document.querySelectorAll('.product-card').forEach(card => {
-        const name = card.querySelector('.card-name')?.textContent.toLowerCase() || '';
-        const cat  = card.querySelector('.card-cat')?.textContent.toLowerCase()  || '';
-        card.style.display = (!q || name.includes(q) || cat.includes(q)) ? '' : 'none';
+        const name    = card.querySelector('.card-name')?.textContent.toLowerCase()  || '';
+        const cat     = card.querySelector('.card-cat')?.textContent.toLowerCase()   || '';
+        const seller  = card.querySelector('.card-desc')?.textContent.toLowerCase()  || '';
+        const matches = !q || name.includes(q) || cat.includes(q) || seller.includes(q);
+        // Hide the card itself; keep grid layout clean with opacity+pointer trick
+        card.style.display = matches ? '' : 'none';
+      });
+
+      // Show/hide "no results" hint per grid
+      ['fruits-grid', 'vegetables-grid'].forEach(gridId => {
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+        const cards   = grid.querySelectorAll('.product-card');
+        const visible = Array.from(cards).filter(c => c.style.display !== 'none');
+        let noRes = grid.querySelector('.search-no-results');
+
+        if (q && cards.length > 0 && visible.length === 0) {
+          if (!noRes) {
+            noRes = document.createElement('p');
+            noRes.className = 'search-no-results';
+            noRes.style.cssText = 'grid-column:1/-1;text-align:center;padding:2rem 1rem;font-size:0.85rem;color:var(--slate-700)';
+            noRes.innerHTML = `<i class="fa-solid fa-magnifying-glass" style="display:block;font-size:1.5rem;color:var(--slate-700);margin-bottom:0.5rem"></i>No results for "<strong style="color:var(--slate-500)">${q}</strong>"`;
+            grid.appendChild(noRes);
+          } else {
+            noRes.querySelector('strong').textContent = q;
+            noRes.style.display = '';
+          }
+        } else if (noRes) {
+          noRes.style.display = 'none';
+        }
+      });
+
+      // Also filter seller's own products table on dashboard
+      document.querySelectorAll('.prod-table tbody tr:not(.skel-row)').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = (!q || text.includes(q)) ? '' : 'none';
       });
     });
   }
@@ -237,13 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.replace('signin.html');
       return;
     }
-    const name = sessionStorage.getItem('zm_seller_name') || 'Seller';
-    ['dash-seller-name', 'dash-welcome-name'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = name;
-    });
-    const av = document.getElementById('dash-avatar');
-    if (av) av.textContent = name.charAt(0).toUpperCase();
+    // Load real products + status from GAS
+    loadDashboard();
+    // Wire up the Add New Product modal
+    initAddProductModal();
   }
 
   /* ── Sign Out ── */
@@ -394,6 +437,7 @@ async function handleSigninSubmit(e) {
       sessionStorage.setItem('zm_auth_token', 'demo_' + Date.now());
       const name = sessionStorage.getItem('zm_seller_name') || 'Seller';
       sessionStorage.setItem('zm_seller_name', name);
+      sessionStorage.setItem('zm_seller_mobile', mobile);  // store for dashboard
       localStorage.removeItem(attemptsKey);
       localStorage.removeItem(lockoutKey);
       setButtonLoading(btn, false);
@@ -424,6 +468,7 @@ async function handleSigninSubmit(e) {
       const token = await sha256(mobile + Date.now());
       sessionStorage.setItem('zm_auth_token',  token);
       sessionStorage.setItem('zm_seller_name', data.sellerName || 'Seller');
+      sessionStorage.setItem('zm_seller_mobile', mobile);  // store for dashboard use
 
       setButtonLoading(btn, false);
       showAlert('signin-alert', 'success', `Welcome back, ${data.sellerName}! Redirecting…`);
@@ -664,4 +709,272 @@ function escHtml(str) {
   return String(str || '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+/* ════════════════════════════════════════════════════════
+   DASHBOARD — Load seller's own products + status
+════════════════════════════════════════════════════════ */
+async function loadDashboard() {
+  const mobile = sessionStorage.getItem('zm_seller_mobile');
+  const name   = sessionStorage.getItem('zm_seller_name') || 'Seller';
+
+  // Restore names
+  ['dash-seller-name', 'dash-welcome-name'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = name;
+  });
+  const av = document.getElementById('dash-avatar');
+  if (av) av.textContent = name.charAt(0).toUpperCase();
+
+  // Demo mode — no GAS connected
+  if (!mobile || GAS_URL.includes('YOUR_GOOGLE')) {
+    renderDashboardStatus('Pending', []);
+    return;
+  }
+
+  try {
+    const url  = `${GAS_URL}?action=getMyProducts&mobile=${encodeURIComponent(mobile)}`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.success) {
+      renderDashboardStatus(data.accountStatus, data.products || []);
+    } else {
+      renderDashboardStatus('Pending', []);
+    }
+  } catch (err) {
+    console.error('loadDashboard error:', err);
+    renderDashboardStatus('Pending', []);
+  }
+}
+
+/* ── Render status notice + products table + button visibility ── */
+function renderDashboardStatus(accountStatus, products) {
+  const isVerified = accountStatus === 'Verified';
+  const notice     = document.getElementById('status-notice');
+  const addBtn     = document.getElementById('add-product-btn');
+  const tableBtn   = document.getElementById('table-add-btn');
+  const sidebarBtn = document.getElementById('sidebar-add-btn');
+  const statusRow  = document.getElementById('dash-status-row');
+  const statusTxt  = document.getElementById('dash-status-text');
+
+  // Update sidebar status dot
+  if (statusRow) {
+    const dot = statusRow.querySelector('.status-dot');
+    if (dot) {
+      dot.className = `status-dot ${isVerified ? 'dot-verified' : 'dot-pending'}`;
+    }
+    if (statusTxt) statusTxt.textContent = isVerified ? 'Verified Seller' : 'Pending Verification';
+  }
+
+  // Account status stat card
+  const acStat = document.getElementById('stat-account-status');
+  if (acStat) {
+    acStat.textContent   = accountStatus;
+    acStat.style.color   = isVerified ? '#4ade80' : '#fbbf24';
+    acStat.style.fontSize = '0.9rem';
+  }
+
+  // Show "Add New Product" button only when verified
+  if (isVerified) {
+    addBtn?.style.setProperty('display', 'inline-flex', 'important');
+    tableBtn?.style.setProperty('display', 'inline-flex', 'important');
+    sidebarBtn?.style.setProperty('display', 'flex', 'important');
+  }
+
+  // Status notice
+  if (notice) {
+    if (isVerified) {
+      notice.innerHTML = `
+        <div class="notice notice-success">
+          <i class="fa-solid fa-circle-check"></i>
+          <div class="notice-text">
+            <strong>Account Verified ✓</strong>
+            Your products are live on ZiphillMart. Use the
+            <strong style="color:var(--lime)">"Add New Product"</strong>
+            button to list more items — each new product will need a quick admin review before going live.
+          </div>
+        </div>`;
+    } else {
+      notice.innerHTML = `
+        <div class="notice notice-warn">
+          <i class="fa-solid fa-clock"></i>
+          <div class="notice-text">
+            <strong>Account Pending Verification</strong>
+            Our admin will verify your account within 24 hours. After verification,
+            your products will go live and you can add more.
+            <a href="https://wa.me/917983447349?text=Hi!%20I%20registered%20on%20ZiphillMart.%20Please%20check%20my%20verification%20status."
+               target="_blank" rel="noopener"
+               style="color:var(--lime);font-weight:600;display:inline-block;margin-top:0.4rem">
+              <i class="fa-brands fa-whatsapp" style="margin-right:0.25rem"></i>Check Status on WhatsApp →
+            </a>
+          </div>
+        </div>`;
+    }
+  }
+
+  // Stats
+  const live    = products.filter(p => p.status === 'Verified').length;
+  const pending = products.filter(p => p.status === 'Pending').length;
+  const el = id => document.getElementById(id);
+  if (el('stat-product-count'))  el('stat-product-count').textContent  = products.length;
+  if (el('stat-verified-count')) el('stat-verified-count').textContent = live;
+  if (el('stat-pending-count'))  el('stat-pending-count').textContent  = pending;
+
+  // Products table
+  renderProductsTable(products);
+}
+
+/* ── Render the seller's own products table ── */
+function renderProductsTable(products) {
+  const area = document.getElementById('products-area');
+  if (!area) return;
+
+  if (!products.length) {
+    area.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+        <div class="empty-title">No products verified yet.</div>
+        <div class="empty-sub">
+          Once admin verifies your account, your products will appear here.
+        </div>
+        <a href="https://wa.me/917983447349?text=Hi!%20Please%20verify%20my%20ZiphillMart%20account."
+           class="btn btn-ghost btn-sm" style="margin-top:1.1rem" target="_blank" rel="noopener">
+          <i class="fa-brands fa-whatsapp"></i>Contact Admin
+        </a>
+      </div>`;
+    return;
+  }
+
+  const rows = products.map((p, i) => {
+    const statusCls = `s-pill s-${p.status || 'Pending'}`;
+    const date = p.timestamp
+      ? new Date(p.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' })
+      : '—';
+    return `
+      <tr>
+        <td><span class="prod-name">${escHtml(p.productName)}</span></td>
+        <td>${escHtml(p.category)}</td>
+        <td class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</td>
+        <td><span class="${statusCls}">${p.status || 'Pending'}</span></td>
+        <td style="font-size:0.72rem;color:var(--slate-700)">${date}</td>
+      </tr>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div style="overflow-x:auto">
+      <table class="prod-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price / kg</th>
+            <th>Status</th>
+            <th>Added</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+
+/* ════════════════════════════════════════════════════════
+   ADD NEW PRODUCT MODAL
+════════════════════════════════════════════════════════ */
+function initAddProductModal() {
+  const modal      = document.getElementById('add-product-modal');
+  const openBtns   = [
+    document.getElementById('add-product-btn'),
+    document.getElementById('table-add-btn'),
+    document.getElementById('sidebar-add-btn')
+  ];
+  const closeBtn   = document.getElementById('modal-close-btn');
+  const cancelBtn  = document.getElementById('modal-cancel-btn');
+  const form       = document.getElementById('add-product-form');
+
+  if (!modal) return;
+
+  const openModal  = () => {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('new-product-name')?.focus();
+  };
+  const closeModal = () => {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    form?.reset();
+    const disp = form?.querySelector('.file-name-display');
+    if (disp) disp.textContent = '';
+    hideAlert('modal-alert');
+  };
+
+  openBtns.forEach(btn => btn?.addEventListener('click', openModal));
+  closeBtn?.addEventListener('click',  closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+  // Form submission
+  form?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn      = form.querySelector('button[type="submit"]');
+    const category = document.getElementById('new-category')?.value;
+    const prodName = document.getElementById('new-product-name')?.value.trim();
+    const price    = document.getElementById('new-price')?.value.trim();
+    const photo    = document.getElementById('new-product-photo')?.files[0];
+    const mobile   = sessionStorage.getItem('zm_seller_mobile');
+
+    // Validation
+    if (!category || !prodName || !price) {
+      showAlert('modal-alert', 'error', 'Please fill in all required fields.'); return;
+    }
+    if (!mobile) {
+      showAlert('modal-alert', 'error', 'Session expired. Please sign in again.'); return;
+    }
+
+    setButtonLoading(btn, true);
+    hideAlert('modal-alert');
+
+    // Demo mode
+    if (GAS_URL.includes('YOUR_GOOGLE')) {
+      setTimeout(() => {
+        setButtonLoading(btn, false);
+        showAlert('modal-alert', 'success', `Demo: "${prodName}" submitted! (Connect GAS to save for real.)`);
+        setTimeout(closeModal, 2000);
+      }, 1000);
+      return;
+    }
+
+    // Real GAS call
+    try {
+      const url = `${GAS_URL}?action=addProduct`
+        + `&mobile=${encodeURIComponent(mobile)}`
+        + `&category=${encodeURIComponent(category)}`
+        + `&productName=${encodeURIComponent(prodName)}`
+        + `&price=${encodeURIComponent(price)}`
+        + `&imageRef=${encodeURIComponent(photo?.name || 'no-image')}`;
+
+      const res  = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      setButtonLoading(btn, false);
+
+      if (data.success) {
+        showAlert('modal-alert', 'success', data.message || 'Product submitted!');
+        setTimeout(() => {
+          closeModal();
+          loadDashboard(); // refresh the table
+        }, 1800);
+      } else {
+        showAlert('modal-alert', 'error', data.message || 'Failed to submit.');
+      }
+    } catch (err) {
+      setButtonLoading(btn, false);
+      showAlert('modal-alert', 'error', 'Network error. Please try again.');
+    }
+  });
 }
